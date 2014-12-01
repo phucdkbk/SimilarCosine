@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -76,10 +77,7 @@ public class Search extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+
             },
             new String [] {
                 "Document", "SimilarCosine"
@@ -176,16 +174,30 @@ public class Search extends javax.swing.JFrame {
         String document = searchContent.getText();
         try {
             List<ResultObject> listResult = CacultateSimilarCosin.gereralSimilarCosin(document, listDocument);
-            int numberOfDisplay = 4;
-            if (numberOfDisplay > listResult.size()) {
-                numberOfDisplay = listResult.size();
+//            int numberOfDisplay = 4;
+//            if (numberOfDisplay > listResult.size()) {
+//                numberOfDisplay = listResult.size();
+//            }
+//            for (int i = 0; i < numberOfDisplay; i++) {
+//                ResultObject aResultObject = listResult.get(i);
+//                jTable1.setValueAt(aResultObject.getDocument(), i, 0);
+//                jTable1.setValueAt(aResultObject.getSimilarCosin(), i, 1);
+//            }
+
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            int rowCount = model.getRowCount();
+            for (int i = 0; i < rowCount; i++) {
+                model.removeRow(0);
             }
-            for (int i = 0; i < numberOfDisplay; i++) {
+            for (int i = 0; i < listResult.size(); i++) {
                 ResultObject aResultObject = listResult.get(i);
-                jTable1.setValueAt(aResultObject.getDocument(), i, 0);
-                jTable1.setValueAt(aResultObject.getSimilarCosin(), i, 1);
+                if (aResultObject.getSimilarCosin() > 0) {
+                    model.addRow(new Object[]{aResultObject.getDocument(), aResultObject.getSimilarCosin()});
+                }
             }
 
+            //DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            //model.addRow(new Object[]{"Column 1", "Column 2"});
         } catch (Exception ex) {
             Logger.getLogger(Search.class.getName()).log(Level.SEVERE, null, ex);
         }
